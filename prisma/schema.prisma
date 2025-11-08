@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  phone         String   @unique
+  name          String
+  password      String
+  preferredLang String   @default("te")
+  role          Role     @default(FARMER)
+  createdAt     DateTime @default(now())
+  farmerProfile FarmerProfile?
+  chats         Chat[]
+  @@map("users")
+}
+
+model FarmerProfile {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String  @unique @db.ObjectId
+  district  String
+  farmSize  Float
+  crops     String[]
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("farmer_profiles")
+}
+
+model Chat {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId   String    @db.ObjectId
+  messages Message[]
+  language String    @default("te")
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("chats")
+}
+
+model Message {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  chatId  String @db.ObjectId
+  content String
+  role    Role2
+  chat    Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  @@map("messages")
+}
+
+enum Role {
+  FARMER
+  ADMIN
+}
+
+enum Role2 {
+  USER
+  ASSISTANT
+}
