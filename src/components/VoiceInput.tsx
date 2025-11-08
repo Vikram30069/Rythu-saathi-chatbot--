@@ -2,12 +2,11 @@
 import { useState } from "react";
 
 export default function VoiceInput({ onTranscript }: { onTranscript: (t: string) => void }) {
-  const [listening, setListening] = useState(false);
-
+  const [listening, setListening] = useState(false);  
   const handleVoice = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
-    recognition.lang = "te-IN"; // you can dynamically change this
+    recognition.lang = "en-US"; // you can dynamically change this
     recognition.start();
 
     recognition.onstart = () => setListening(true);
